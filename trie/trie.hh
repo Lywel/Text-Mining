@@ -3,11 +3,10 @@
 #include <variant>
 #include <vector>
 
-struct trie_node 
+struct trie_node
 {
     char c;
     uint skipped_char;
-    uint offset; 
 };
 
 class trie
