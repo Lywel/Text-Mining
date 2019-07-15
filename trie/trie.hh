@@ -3,12 +3,14 @@
 
 struct trie_node
 {
-    char c;
-    uint skipped_char;
+    char label() const
+    {
+        return str[str.size()-1];
+    }
+    size_t len() const
+    {
+        return str.size() - 1;
+    }
+    std::string str;
     std::vector<trie_node> child;
-};
-
-struct root_node
-{
-    std::map<char, trie_node> child;
 };
