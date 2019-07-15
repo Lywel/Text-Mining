@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include "trie.hh"
 
 void compile(std::ifstream& words, std::ofstream& bin)
 {
