@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
 #include "trie.hh"
 
 /**
@@ -26,7 +26,7 @@ void trie_insert(root_node root, std::string word, uint64_t offset)
  */
 uint32_t dict_insert(std::ofstream& bin, const std::string& word, uint32_t occ)
 {
-    boost::archive::text_oarchive oa{bin};
+    boost::archive::binary_oarchive oa{bin};
 
     oa & word;
     oa & occ;
