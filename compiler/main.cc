@@ -1,9 +1,14 @@
 #include <iostream>
 #include <fstream>
 
-void compile(const std::ifstream& words, std::ofstream& bin)
+void compile(std::ifstream& words, std::ofstream& bin)
 {
-    bin << "test" << std::endl;
+    std::string word;
+    uint32_t occ;
+
+    while (words >> word >> occ) {
+
+    }
 }
 
 int main(int argc, char** argv)
