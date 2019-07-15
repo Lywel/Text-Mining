@@ -1,11 +1,10 @@
 #include <map>
 #include <vector>
 
-class trie_node
+struct trie_node
 {
     char c;
     uint skipped_char;
-    uint offset; 
     std::vector<trie_node> child;
 };
 

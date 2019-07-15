@@ -1,6 +1,5 @@
 #include <iostream>
 #include <fstream>
-#include <boost/archive/binary_oarchive.hpp>
 #include "trie.hh"
 
 /**
@@ -13,25 +12,9 @@
 void trie_insert(root_node root, std::string word, uint64_t offset)
 {
 
+
 }
 
-/**
- * @brief Insert a word / occurence pair in the dict
- *
- * @param bin
- * @param word
- * @param occ
- *
- * @return The number of written bytes
- */
-uint32_t dict_insert(std::ofstream& bin, const std::string& word, uint32_t occ)
-{
-    boost::archive::binary_oarchive oa{bin};
-
-    oa & word;
-    oa & occ;
-    return 0;
-}
 
 /**
  * @brief 
@@ -46,7 +29,6 @@ void compile(std::ifstream& words, std::ofstream& bin)
 
     root_node root;
     while (words >> word >> occ) {
-        uint32_t res = dict_insert(bin, word, occ);
         trie_insert(root, word, 0);
     }
 }
