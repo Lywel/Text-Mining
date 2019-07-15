@@ -12,3 +12,4 @@ file(GLOB SRC
 include_directories(../trie)
 
 add_executable(compiler ${SRC})
+target_link_libraries(compiler LINK_PUBLIC ${Boost_LIBRARIES} )
