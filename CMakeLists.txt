@@ -5,7 +5,25 @@ project(textmining VERSION 1.0.0 LANGUAGES CXX)
 list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake)
 
 # Dependencies
-# find_package(Boost 1.55 REQUIRED COMPONENTS regex)
+find_package(Boost 1.55 REQUIRED COMPONENTS serialization)
+find_package(Doxygen REQUIRED dot OPTIONAL_COMPONENTS mscgen dia)
+
+
+# Doxygen config
+set(DOXYGEN_GENERATE_HTML YES)
+set(DOXYGEN_GENERATE_MAN NO)
+
+set(GLOB PROJECT_SOURCE_DIR
+  app
+  compiler
+  trie
+)
+
+doxygen_add_docs(
+    doxygen
+    ${PROJECT_SOURCE_DIR}
+    COMMENT "Generate doxygen HTML"
+)
 
 # Flags
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -Wall -Wextra -pedantic -Ofast -DNO_BZIP2" )

@@ -2,13 +2,38 @@
 #include <fstream>
 #include "trie.hh"
 
+struct root_node {};
+
+void trie_insert(root_node root, std::string word, uint64_t offset)
+{
+
+}
+
+/**
+ * @brief Insert a word / occurence pair in the dict
+ *
+ * This is a test description MAXIME !
+ *
+ * @param bin
+ * @param word
+ * @param occ
+ *
+ * @return The number of written bytes
+ */
+uint32_t dict_insert(std::ofstream& bin, const std::string& word, uint32_t occ)
+{
+    return 0;
+}
+
 void compile(std::ifstream& words, std::ofstream& bin)
 {
     std::string word;
     uint32_t occ;
 
+    root_node root;
     while (words >> word >> occ) {
-
+        uint32_t res = dict_insert(bin, word, occ);
+        trie_insert(root, word, 0);
     }
 }
 
