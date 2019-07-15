@@ -34,9 +34,6 @@ int main(int argc, char** argv)
 
     compile(freq_file, bin_file);
 
-    freq_file.close();
-    bin_file.close();
-
     return 0;
 }
 
