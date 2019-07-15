@@ -50,19 +50,6 @@ void trie_insert(trie_node& root, std::string word)
     {
         std::string suffix = word.substr(cur);
         std::cout << "  suffix: " << suffix << std::endl;
-
-        // Look for a full match
-        const auto& next = std::find_if(node->child.begin(), node->child.end(),
-            [&root, &word, &cur](const auto& n) -> bool
-            {
-                // If this node would have made the word too long
-                if (n.len() > word.size() - cur)
-                    return false;
-                return n.label() == word[cur + n.len()];
-            }
-        );
-
-        if (next == node->child.end()) {
             /* No child fully matched: Look for a partial match
              *
              * 1) partial match found
@@ -88,7 +75,33 @@ void trie_insert(trie_node& root, std::string word)
                 if (match_len)
                     break;
             }
-            if (match_len) {
+
+            if (!match_len)
+            {
+                // 2) no match at all
+                // simple insert
+                std::string suff = word.substr(cur);
+                node->child.push_back(trie_node{suff});
+                cur += suff.size();
+                std::cout << "    leaf: " << suff << std::endl;
+            }
+            else if (match_len == node->child[match_id].len())
+            {
+                if (match_len == suffix.size())
+                {
+                    // Full match found
+                    std::string suff = word.substr(cur + match_len);
+                    node->child[match_id].child.push_back(trie_node{suff});
+                    cur += match_len + suff.size();
+                    std::cout << "    leaf: " << suff << std::endl;
+                }
+                else
+                {
+                    node = &(node->child[match_id]);
+                    cur += match_len;
+                }
+            }
+            else {
                 // 1) Partial match found
                 // split on match
                 std::string pref = node->child[match_id].str.substr(0,match_len);
@@ -116,20 +129,6 @@ void trie_insert(trie_node& root, std::string word)
                 // Edit and relocation the partially matched node
                 cur += suffix.size();
             }
-            else
-            {
-                // 2) Simple insert
-                std::string suffix = word.substr(cur);
-                node->child.push_back(trie_node{suffix});
-                cur += suffix.size();
-                std::cout << "    leaf: " << suffix << std::endl;
-            }
-        }
-        else
-        {
-            node = &(*next);
-            cur += node->len();
-        }
     }
 }
 
