@@ -1,30 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include <algorithm>
 #include "trie.hh"
-#include <iomanip>
-
-void print_trie_(const trie_node& t, int offset)
-{
-    std::cout
-        <<  std::string(offset, ' ')
-        << "└"
-        << " " << t.str;
-
-    if (t.occ)
-        std::cout << " (" << t.occ << ")";
-
-    std::cout << std::endl;
-
-    for (const trie_node& c : t.child)
-        print_trie_(c, offset + 2);
-}
-
-void print_trie(const trie_node& t)
-{
-    for (const trie_node& c : t.child)
-        print_trie_(c, 0);
-}
 
 size_t common_prefix_len(const std::string& str1, const std::string& str2)
 {
@@ -45,11 +21,11 @@ size_t common_prefix_len(const std::string& str1, const std::string& str2)
  * @param word
  * @param offset
  */
-void trie_insert(trie_node& root, std::string word, uint32_t occ)
+void trie_insert(TrieNode& root, std::string word, uint32_t occ)
 {
     std::cout << std::endl << "insert(" << word << ")" << std::endl;
     size_t cur = 0;
-    trie_node* node = &root;
+    TrieNode* node = &root;
 
     while (cur < word.size())
     {
@@ -86,11 +62,7 @@ void trie_insert(trie_node& root, std::string word, uint32_t occ)
                 // 2) no match at all
                 // simple insert
                 std::string suff = word.substr(cur);
-                trie_node new_node{
-                    .str = suff,
-                    .occ = occ
-                };
-                node->child.push_back(new_node);
+                node->add_child(suff, occ);
                 cur += suff.size();
                 std::cout << "    leaf: " << suff << std::endl;
             }
@@ -100,11 +72,7 @@ void trie_insert(trie_node& root, std::string word, uint32_t occ)
                 {
                     // Full match found
                     std::string suff = word.substr(cur + match_len);
-                    trie_node new_node{
-                        .str = suff,
-                        .occ = occ
-                    };
-                    node->child[match_id].child.push_back(new_node);
+                    node->child[match_id].add_child(suff, occ);
                     cur += match_len + suff.size();
                     std::cout << "    leaf: " << suff << std::endl;
                 }
@@ -120,29 +88,17 @@ void trie_insert(trie_node& root, std::string word, uint32_t occ)
                 std::string pref = node->child[match_id].str.substr(0,match_len);
                 std::string suff = node->child[match_id].str.substr(match_len);
 
-                // create a prefix node
-                trie_node new_node{pref};
+                // create and append a prefix node
+                TrieNode* new_node = node->add_child(pref);
                 std::cout << "    node: " << pref << std::endl;
 
                 // append the end of the word to it
-                trie_node new_node_end{
-                    .str = suffix.substr(match_len),
-                    .occ = occ
-                };
-                new_node.child.push_back(new_node_end);
+                new_node->add_child(suffix.substr(match_len), occ);
                 std::cout << "      leaf: " <<  suffix.substr(match_len) << std::endl;
 
                 // attatch the end of the partially matched node
-                trie_node partial_match_end{
-                    .str = suff,
-                    .child = node->child[match_id].child,
-                    .occ = node->child[match_id].occ
-                };
-                new_node.child.push_back(partial_match_end);
+                new_node->add_child(suff, node->child[match_id].occ, node->child[match_id].child);
                 std::cout << "      leaf: " <<  suff << std::endl;
-
-                // append the new node
-                node->child.push_back(new_node);
 
                 // erase the old partially matched node
                 node->child.erase(node->child.begin() + match_id);
@@ -166,11 +122,11 @@ void compile(std::ifstream& words, std::ofstream& bin)
     std::string word;
     uint32_t occ;
 
-    trie_node root;
+    TrieNode root("");
     while (words >> word >> occ) {
         trie_insert(root, word, occ);
-        print_trie(root);
     }
+    root.pretty_print(std::cout);
 }
 
 int main(int argc, char** argv)
