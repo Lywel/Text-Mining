@@ -9,4 +9,4 @@ file(GLOB SRC
 )
 
 add_executable(compiler ${SRC})
-#target_link_libraries(compiler LINK_PUBLIC ${Boost_LIBRARIES} )
+target_link_libraries(compiler LINK_PUBLIC ${Boost_LIBRARIES} )

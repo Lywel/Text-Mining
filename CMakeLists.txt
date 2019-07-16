@@ -5,10 +5,10 @@ project(textmining VERSION 1.0.0 LANGUAGES CXX)
 #list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake)
 
 # Dependencies
-#find_package(Boost 1.55 REQUIRED COMPONENTS serialization)
+find_package(Boost 1.55 REQUIRED COMPONENTS serialization)
 find_package(Doxygen REQUIRED dot OPTIONAL_COMPONENTS mscgen dia)
 
-#include_directories( ${Boost_INCLUDE_DIR} )
+include_directories( ${Boost_INCLUDE_DIR} )
 
 # Doxygen config
 set(DOXYGEN_GENERATE_HTML YES)

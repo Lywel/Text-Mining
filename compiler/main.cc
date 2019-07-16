@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include "trie.hh"
+#include <boost/archive/binary_oarchive.hpp>
 
 size_t common_prefix_len(const std::string& str1, const std::string& str2)
 {
@@ -23,14 +24,19 @@ size_t common_prefix_len(const std::string& str1, const std::string& str2)
  */
 void trie_insert(TrieNode& root, std::string word, uint32_t occ)
 {
+
+    #ifdef DEBUG
     std::cout << std::endl << "insert(" << word << ")" << std::endl;
+    #endif
     size_t cur = 0;
     TrieNode* node = &root;
 
     while (cur < word.size())
     {
         std::string suffix = word.substr(cur);
+    #ifdef DEBUG
         std::cout << "  suffix: " << suffix << std::endl;
+    #endif
             /* No child fully matched: Look for a partial match
              *
              * 1) partial match found
@@ -64,7 +70,9 @@ void trie_insert(TrieNode& root, std::string word, uint32_t occ)
                 std::string suff = word.substr(cur);
                 node->add_child(suff, occ);
                 cur += suff.size();
+    #ifdef DEBUG
                 std::cout << "    leaf: " << suff << std::endl;
+    #endif
             }
             else if (match_len == node->child[match_id].len())
             {
@@ -74,7 +82,9 @@ void trie_insert(TrieNode& root, std::string word, uint32_t occ)
                     std::string suff = word.substr(cur + match_len);
                     node->child[match_id].add_child(suff, occ);
                     cur += match_len + suff.size();
+    #ifdef DEBUG
                     std::cout << "    leaf: " << suff << std::endl;
+    #endif
                 }
                 else
                 {
@@ -90,19 +100,27 @@ void trie_insert(TrieNode& root, std::string word, uint32_t occ)
 
                 // create and append a prefix node
                 TrieNode* new_node = node->add_child(pref);
+    #ifdef DEBUG
                 std::cout << "    node: " << pref << std::endl;
+    #endif
 
                 // append the end of the word to it
                 new_node->add_child(suffix.substr(match_len), occ);
+    #ifdef DEBUG
                 std::cout << "      leaf: " <<  suffix.substr(match_len) << std::endl;
+    #endif
 
                 // attatch the end of the partially matched node
                 new_node->add_child(suff, node->child[match_id].occ, node->child[match_id].child);
+    #ifdef DEBUG
                 std::cout << "      leaf: " <<  suff << std::endl;
+    #endif
 
                 // erase the old partially matched node
                 node->child.erase(node->child.begin() + match_id);
+    #ifdef DEBUG
                 std::cout << "    erase: " << pref << suff << std::endl;
+    #endif
 
                 // Edit and relocation the partially matched node
                 cur += suffix.size();
@@ -112,7 +130,7 @@ void trie_insert(TrieNode& root, std::string word, uint32_t occ)
 
 
 /**
- * @brief 
+ * @brief
  *
  * @param words
  * @param bin
@@ -126,7 +144,18 @@ void compile(std::ifstream& words, std::ofstream& bin)
     while (words >> word >> occ) {
         trie_insert(root, word, occ);
     }
+
+    #ifdef DEBUG
     root.pretty_print(std::cout);
+    #endif
+
+    std::cout << "trie built: saveing..." << std::endl;
+    // save data to archive
+    {
+        boost::archive::binary_oarchive oa(bin, boost::archive::no_header);
+        oa << root;
+    }
+    std::cout << "done." << std::endl;
 }
 
 int main(int argc, char** argv)

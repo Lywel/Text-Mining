@@ -23,8 +23,3 @@ void TrieNode::pretty_print_aux(std::ostream& out, int offset) const
     for (const TrieNode& c : child)
         c.pretty_print_aux(out, offset + 2);
 }
-
-void TrieNode::marshal(std::ostream& out) const
-{
-
-}

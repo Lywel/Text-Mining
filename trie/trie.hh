@@ -3,6 +3,9 @@
 #include <map>
 #include <vector>
 #include <iostream>
+#include <boost/archive/binary_iarchive.hpp>
+#include <boost/archive/binary_oarchive.hpp>
+#include <boost/serialization/vector.hpp>
 
 class TrieNode
 {
@@ -18,10 +21,6 @@ public:
 
     size_t len() const;
     void pretty_print(std::ostream& out) const;
-    void marshal(std::ostream& out) const;
-
-//    template <class... Args>
-//    TrieNode* add_child(Args&&... args);
 
     template <class... Args>
     TrieNode* add_child(Args&&... args)
@@ -34,5 +33,14 @@ public:
     std::vector<TrieNode> child;
 
 private:
+    friend class boost::serialization::access;
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version)
+    {
+        ar & str;
+        ar & occ;
+        ar & child;
+    }
+
     void pretty_print_aux(std::ostream& out, int offset) const;
 };
