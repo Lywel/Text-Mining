@@ -1,3 +1,5 @@
+#pragma once
+
 #include <map>
 #include <vector>
 #include <iostream>
@@ -18,8 +20,14 @@ public:
     void pretty_print(std::ostream& out) const;
     void marshal(std::ostream& out) const;
 
+//    template <class... Args>
+//    TrieNode* add_child(Args&&... args);
+
     template <class... Args>
-    TrieNode* add_child(Args&&... args);
+    TrieNode* add_child(Args&&... args)
+    {
+        return &(child.emplace_back(std::forward<Args>(args)...));
+    }
 
     std::string str;
     uint32_t occ = 0;

@@ -1,15 +1,12 @@
 set(GLOB HEADERS
-  *.hh
-  ../trie/*.hh
+  ../trie/trie.hh
 )
 
 file(GLOB SRC
   ${HEADERS}
-  *.cc
-  ../trie/*.cc
+  ../trie/trie.cc
+  main.cc
 )
 
-include_directories(../trie)
-
 add_executable(compiler ${SRC})
-target_link_libraries(compiler LINK_PUBLIC ${Boost_LIBRARIES} )
+#target_link_libraries(compiler LINK_PUBLIC ${Boost_LIBRARIES} )
