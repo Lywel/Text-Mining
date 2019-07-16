@@ -163,7 +163,8 @@ int main(int argc, char** argv)
     if (argc < 3)
     {
         std::cerr
-            << "Usage: ./ref/TextMiningCompiler /path/to/word/freq.txt /path/to/output/dict.bin"
+            << "Usage: " << argv[0]
+            << " /path/to/word/freq.txt /path/to/output/dict.bin"
             << std::endl;
         return 1;
     }

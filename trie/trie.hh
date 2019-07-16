@@ -10,6 +10,7 @@
 class TrieNode
 {
 public:
+    TrieNode() {};
     TrieNode(const std::string& str_)
         : str(str_) {};
     TrieNode(const std::string& str_, uint32_t occ_)
