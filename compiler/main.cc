@@ -9,7 +9,12 @@ void print_trie_(const trie_node& t, int offset)
     std::cout
         <<  std::string(offset, ' ')
         << "└"
-        << " " << t.str << std::endl;
+        << " " << t.str;
+
+    if (t.occ)
+        std::cout << " (" << t.occ << ")";
+
+    std::cout << std::endl;
 
     for (const trie_node& c : t.child)
         print_trie_(c, offset + 2);
@@ -40,7 +45,7 @@ size_t common_prefix_len(const std::string& str1, const std::string& str2)
  * @param word
  * @param offset
  */
-void trie_insert(trie_node& root, std::string word)
+void trie_insert(trie_node& root, std::string word, uint32_t occ)
 {
     std::cout << std::endl << "insert(" << word << ")" << std::endl;
     size_t cur = 0;
@@ -81,7 +86,11 @@ void trie_insert(trie_node& root, std::string word)
                 // 2) no match at all
                 // simple insert
                 std::string suff = word.substr(cur);
-                node->child.push_back(trie_node{suff});
+                trie_node new_node{
+                    .str = suff,
+                    .occ = occ
+                };
+                node->child.push_back(new_node);
                 cur += suff.size();
                 std::cout << "    leaf: " << suff << std::endl;
             }
@@ -91,7 +100,11 @@ void trie_insert(trie_node& root, std::string word)
                 {
                     // Full match found
                     std::string suff = word.substr(cur + match_len);
-                    node->child[match_id].child.push_back(trie_node{suff});
+                    trie_node new_node{
+                        .str = suff,
+                        .occ = occ
+                    };
+                    node->child[match_id].child.push_back(new_node);
                     cur += match_len + suff.size();
                     std::cout << "    leaf: " << suff << std::endl;
                 }
@@ -112,11 +125,20 @@ void trie_insert(trie_node& root, std::string word)
                 std::cout << "    node: " << pref << std::endl;
 
                 // append the end of the word to it
-                new_node.child.push_back(trie_node{suffix.substr(match_len)});
+                trie_node new_node_end{
+                    .str = suffix.substr(match_len),
+                    .occ = occ
+                };
+                new_node.child.push_back(new_node_end);
                 std::cout << "      leaf: " <<  suffix.substr(match_len) << std::endl;
 
                 // attatch the end of the partially matched node
-                new_node.child.push_back(trie_node{suff, node->child[match_id].child});
+                trie_node partial_match_end{
+                    .str = suff,
+                    .child = node->child[match_id].child,
+                    .occ = node->child[match_id].occ
+                };
+                new_node.child.push_back(partial_match_end);
                 std::cout << "      leaf: " <<  suff << std::endl;
 
                 // append the new node
@@ -146,7 +168,7 @@ void compile(std::ifstream& words, std::ofstream& bin)
 
     trie_node root;
     while (words >> word >> occ) {
-        trie_insert(root, word);
+        trie_insert(root, word, occ);
         print_trie(root);
     }
 }

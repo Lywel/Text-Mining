@@ -9,4 +9,5 @@ struct trie_node
     }
     std::string str;
     std::vector<trie_node> child;
+    uint32_t occ = 0;
 };
