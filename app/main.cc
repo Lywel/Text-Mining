@@ -3,7 +3,6 @@
 #include <boost/archive/binary_iarchive.hpp>
 #include "trie.hh"
 
-
 int main(int argc, char** argv) {
     if (argc < 2)
     {
@@ -28,8 +27,53 @@ int main(int argc, char** argv) {
     return 0;
 }
 
-trie_set search(const TrieNode& root, std::string& str, uint distance)
+trie_set search(const TrieNode *root, std::string& str, uint8_t distance)
 {
+    /*trie_set res;
+    std::queue<*TrieNode> queue;
+    const auto *curr = root;
+    uint8_t len = 0;
+
+    do {
+
+        for (auto& node: *curr.child)
+        {
+            if (levenstein_dist(node.str, str, len) =< distance)
+            {
+                queue.push(&node);
+            }
+        }
+
+        len -= (*curr).len();
+        curr = queue.pop();
+        len += (*curr).len();
+
+    } while(!queue.empty())
+
+    return e;*/
     
-    return e;
+    trie_set res;
+    search_aux(res, root, "", str, distance);
+}
+
+void search_aux(trie_set& res, const TrieNode& cur, std::string& prev, std::string& str, uint8_t distance)
+{
+    uint8_t dist;
+    std::string cur_str = prev + cur.str;
+
+    if ((dist = levenstein_dist(cur_str, str.substr(0, cur_str.size()))) <= distance)
+    {
+        if (cur.occ && (cur_str.size() == str.size() || (dist = levenstein_dist(cur_str, str)) <= distance))
+        {
+            res.emplace(cur_str, cur.occ, dist);
+        }
+        else
+        {
+            for (auto& node : cur.child)
+            {
+                search_aux(res, node, cur_str, str, distance);
+            }
+        }
+    }
+
 }

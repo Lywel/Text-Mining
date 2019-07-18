@@ -52,7 +52,7 @@ struct result
 {
     std::string str;
     uint32_t freq;
-    uint32_t distance;
+    uint8_t distance;
 };
 
 struct result_compare
