@@ -42,32 +42,37 @@ uint16_t levenstein_dist(const std::string& s1, const std::string& s2)
     return(res);
 }
 
-void search_aux(trie_set& res, const TrieNode& cur, const std::string& prev, const std::string& str, uint16_t distance)
+void search_aux(trie_set& res, const TrieNode& node, const std::string& word,
+        const std::string acc, uint16_t max_dist)
 {
-    uint16_t dist;
-    std::string cur_str = prev + cur.str;
+    if (word.size() + max_dist < acc.size())
+        return;
 
-    if ((dist = levenstein_dist(cur_str, str.substr(0, cur_str.size()))) <= distance)
+    for (const auto& child : node.child)
     {
-        if (cur.occ && (cur_str.size() == str.size() || (dist = levenstein_dist(cur_str, str)) <= distance))
+        const std::string cur_str = acc + child.str;
+        if (child.occ)
         {
-            res.emplace(cur_str, cur.occ, dist);
+            uint16_t dist = levenstein_dist(word, cur_str);
+
+            if (dist <= max_dist)
+            {
+                res.emplace(cur_str, child.occ, dist);
+                if (!max_dist)
+                    return;
+            }
         }
         else
         {
-            for (auto& node : cur.child)
-            {
-                search_aux(res, node, cur_str, str, distance);
-            }
+            search_aux(res, child, word, cur_str, max_dist);
         }
     }
-
 }
 
-trie_set search(const TrieNode& root, const std::string& str, uint16_t distance)
+trie_set search(const TrieNode& root, const std::string& word, uint16_t distance)
 {
     trie_set res;
-    search_aux(res, root, root.str, str, distance);
+    search_aux(res, root, word, "", distance);
     return res;
 }
 
@@ -92,6 +97,10 @@ void loop(const TrieNode& root, std::istream& words, std::ostream& out)
 }
 
 int main(int argc, char** argv) {
+    std::string a("martin");
+    std::string b("gratin");
+    std::cout << "|martin/gratin| = " << levenstein_dist(a, b) << std::endl;
+    exit(0);
     if (argc < 2)
     {
         std::cerr
