@@ -4,7 +4,7 @@
 #include "trie.hh"
 
 int mini(int a, int b, int c){
-    return(min(a, min(b,c)));
+    return(std::min(a, std::min(b,c)));
 }
 
 uint16_t levenstein_dist(const std::string& s1, const std::string& s2)
@@ -26,12 +26,12 @@ uint16_t levenstein_dist(const std::string& s1, const std::string& s2)
         suppr_dist = dist[(size2 + 1) * (i - 1) + j] + 1;
         insert_dist = dist[(size2 + 1) * i + j - 1] + 1;
         subs_dist = dist[(size2 + 1) * (i - 1) + j - 1];
-        
-        if (word1[i-1] != word2[j-1])
+
+        if (s1[i-1] != s2[j-1])
           subs_dist += 1;
-        
+
         val = mini(suppr_dist, insert_dist, subs_dist);
-        if(((i>=2) && (j>=2)) && ((word1[i-1]==word2[j-2]) && (word1[i-2]==word2[j-1])))
+        if(((i>=2) && (j>=2)) && ((s1[i-1]==s2[j-2]) && (s1[i-2]==s2[j-1])))
               val = std::min(dist[(size2+1)*(i-2)+j-2]+1, val);
           dist[(size2+1)*i+j] = val;
       }
@@ -62,10 +62,7 @@ void search_aux(trie_set& res, const TrieNode& node, const std::string& word,
                     return;
             }
         }
-        else
-        {
-            search_aux(res, child, word, cur_str, max_dist);
-        }
+        search_aux(res, child, word, cur_str, max_dist);
     }
 }
 
@@ -96,11 +93,8 @@ void loop(const TrieNode& root, std::istream& words, std::ostream& out)
     }
 }
 
+
 int main(int argc, char** argv) {
-    std::string a("martin");
-    std::string b("gratin");
-    std::cout << "|martin/gratin| = " << levenstein_dist(a, b) << std::endl;
-    exit(0);
     if (argc < 2)
     {
         std::cerr
