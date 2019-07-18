@@ -3,6 +3,7 @@
 #include <boost/archive/binary_iarchive.hpp>
 #include "trie.hh"
 
+
 int main(int argc, char** argv) {
     if (argc < 2)
     {
@@ -25,4 +26,10 @@ int main(int argc, char** argv) {
     }
     root.pretty_print(std::cout);
     return 0;
+}
+
+trie_set search(const TrieNode& root, std::string& str, uint distance)
+{
+    
+    return e;
 }

@@ -6,6 +6,7 @@
 #include <boost/archive/binary_iarchive.hpp>
 #include <boost/archive/binary_oarchive.hpp>
 #include <boost/serialization/vector.hpp>
+#include <set>
 
 class TrieNode
 {
@@ -38,6 +39,7 @@ private:
     template<class Archive>
     void serialize(Archive & ar, const unsigned int version)
     {
+        (void)version;
         ar & str;
         ar & occ;
         ar & child;
@@ -45,3 +47,22 @@ private:
 
     void pretty_print_aux(std::ostream& out, int offset) const;
 };
+
+struct result
+{
+    std::string str;
+    uint32_t freq;
+    uint32_t distance;
+};
+
+struct result_compare
+{
+    bool operator() (const result& lhs, const result& rhs) const 
+    {
+        return lhs.distance < rhs.distance 
+        && lhs.freq > rhs.freq
+        && lhs.str < rhs.str;
+    }
+};
+
+typedef std::set<result, result_compare> trie_set;
