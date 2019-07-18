@@ -50,15 +50,17 @@ private:
 
 struct result
 {
+    result(const std::string& str_, uint32_t freq_, uint16_t distance_)
+        : str(str_), freq(freq_), distance(distance_) {};
     std::string str;
     uint32_t freq;
-    uint8_t distance;
+    uint16_t distance;
     friend std::ostream& operator<<(std::ostream &out, const result &r)
     {
         out << "{"
             << "\"word\":\"" << r.str << "\","
             << "\"freq\":" << r.freq << ","
-            << "\"distance\":" << (int)r.distance << "}";
+            << "\"distance\":" << r.distance << "}";
         return out;
     }
 };
