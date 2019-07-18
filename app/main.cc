@@ -3,6 +3,62 @@
 #include <boost/archive/binary_iarchive.hpp>
 #include "trie.hh"
 
+trie_set search(const TrieNode& root, const std::string& str, uint8_t distance)
+{
+    trie_set results;
+
+    auto res = results.insert(result{"test1", 42, 2});
+    assert(res.first != results.end());
+    if (res.second)
+        std::cout << "insert done\n";
+    else
+        std::cout << "failed to insert\n";
+
+    res = results.insert(result{"test2", 420, 1});
+    assert(res.first != results.end());
+    if (res.second)
+        std::cout << "insert done\n";
+    else
+        std::cout << "failed to insert\n";
+
+    res = results.insert(result{"test3", 42000, 1});
+    assert(res.first != results.end());
+    if (res.second)
+        std::cout << "insert done\n";
+    else
+        std::cout << "failed to insert\n";
+
+    res = results.insert(result{"test4", 4200, 1});
+    assert(res.first != results.end());
+    if (res.second)
+        std::cout << "insert done\n";
+    else
+        std::cout << "failed to insert\n";
+
+    std::cout << "result size: " << results.size() << std::endl;
+    return results;
+}
+
+void loop(const TrieNode& root, std::istream& words, std::ostream& out)
+{
+    std::string _;
+    std::string word;
+    uint8_t distance;
+
+    while (words >> _ >> word >> distance)
+    {
+        std::string sep;
+        const trie_set& results = search(root, word, distance);
+        out << "[";
+        for (const auto& result : results)
+        {
+            out << sep << result;
+            sep = ",";
+        }
+        out << "]" << std::endl;
+    }
+}
+
 int main(int argc, char** argv) {
     if (argc < 2)
     {
@@ -23,7 +79,9 @@ int main(int argc, char** argv) {
         boost::archive::binary_iarchive ia(bin_file, boost::archive::no_header);
         ia >> root;
     }
-    root.pretty_print(std::cout);
+    // root.pretty_print(std::cout);
+    loop(root, std::cin, std::cout);
+
     return 0;
 }
 

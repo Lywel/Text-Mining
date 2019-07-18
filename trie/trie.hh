@@ -53,15 +53,23 @@ struct result
     std::string str;
     uint32_t freq;
     uint8_t distance;
+    friend std::ostream& operator<<(std::ostream &out, const result &r)
+    {
+        out << "{"
+            << "\"word\":\"" << r.str << "\","
+            << "\"freq\":" << r.freq << ","
+            << "\"distance\":" << (int)r.distance << "}";
+        return out;
+    }
 };
 
 struct result_compare
 {
     bool operator() (const result& lhs, const result& rhs) const 
     {
-        return lhs.distance < rhs.distance 
-        && lhs.freq > rhs.freq
-        && lhs.str < rhs.str;
+        return //lhs.distance < rhs.distance
+            //&& lhs.freq > rhs.freq &&
+            lhs.str < rhs.str;
     }
 };
 
