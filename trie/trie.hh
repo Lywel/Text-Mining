@@ -69,9 +69,9 @@ struct result_compare
 {
     bool operator() (const result& lhs, const result& rhs) const 
     {
-        return //lhs.distance < rhs.distance
-            //&& lhs.freq > rhs.freq &&
-            lhs.str < rhs.str;
+        return (lhs.distance < rhs.distance)
+            || ((lhs.distance == rhs.distance) && lhs.freq > rhs.freq)
+            || ((lhs.freq == rhs.freq) && lhs.str < rhs.str);
     }
 };
 
