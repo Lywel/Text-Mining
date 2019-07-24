@@ -6,7 +6,7 @@
 
 void search_aux(trie_set& res, const TrieNode& node, BacktrackLevenshtein& leven, uint16_t max_dist)
 {
-    for (const auto& child : (*node).child)
+    for (const auto& child : node.child)
     {
         uint16_t old_hay_size = leven.get_hay_size();
 

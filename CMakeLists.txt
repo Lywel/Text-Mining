@@ -25,6 +25,7 @@ doxygen_add_docs(
 
 # Flags
 set(CMAKE_CXX_STANDARD 17)
+#set(CMAKE_CXX_FLAGS "-ggdb -O2")
 set(CMAKE_C_FLAGS "-Wall -Wextra -pedantic -Ofast -ffloat-store -ffast-math -fno-rounding-math -fno-signaling-nans -fcx-limited-range -fno-math-errno -funsafe-math-optimizations -fassociative-math -freciprocal-math -ffinite-math-only -fno-signed-zeros -fno-trapping-math -frounding-math -fsingle-precision-constant -fcx-fortran-rules")
 set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic -Ofast -ffloat-store -ffast-math -fno-rounding-math -fno-signaling-nans -fcx-limited-range -fno-math-errno -funsafe-math-optimizations -fassociative-math -freciprocal-math -ffinite-math-only -fno-signed-zeros -fno-trapping-math -frounding-math -fsingle-precision-constant -fcx-fortran-rules")
 
