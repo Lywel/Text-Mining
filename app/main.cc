@@ -2,51 +2,7 @@
 #include <fstream>
 #include <boost/archive/binary_iarchive.hpp>
 #include "trie.hh"
-
-int mini(int a, int b, int c){
-    return(std::min(a, std::min(b,c)));
-}
-
-uint16_t levenstein_dist(const std::string& s1, const std::string& s2, uint16_t max_dist)
-{
-    if (max_dist == 0)
-    {
-        auto res = s1.compare(s2);
-        return res != 0 ? 1 : 0; 
-    }
-
-    int size1 = s1.size(), size2 = s2.size();
-    int suppr_dist, insert_dist, subs_dist, val;
-    int* dist = new int[(size1 + 1) * (size2 + 1)];
-
-    for (int i = 0; i < size1 + 1; ++i)
-        dist[(size2 + 1) * i] = i;
-
-    for (int j = 0; j < size2 + 1; ++j)
-        dist[j] = j;
-
-    for (int i = 1; i < size1 + 1; ++i)
-    {
-      for (int j = 1; j < size2 + 1; ++j)
-      {
-        suppr_dist = dist[(size2 + 1) * (i - 1) + j] + 1;
-        insert_dist = dist[(size2 + 1) * i + j - 1] + 1;
-        subs_dist = dist[(size2 + 1) * (i - 1) + j - 1];
-
-        if (s1[i-1] != s2[j-1])
-          subs_dist += 1;
-
-        val = mini(suppr_dist, insert_dist, subs_dist);
-        if(((i>=2) && (j>=2)) && ((s1[i-1]==s2[j-2]) && (s1[i-2]==s2[j-1])))
-              val = std::min(dist[(size2+1)*(i-2)+j-2]+1, val);
-          dist[(size2+1)*i+j] = val;
-      }
-    }
-
-    int res = dist[(size1+1)*(size2+1) - 1];
-    delete dist;
-    return(res);
-}
+#include "backtrack_levenshtein.hh"
 
 void search_exact(trie_set& res, const TrieNode* root, const std::string& word, size_t offset)
 {
@@ -74,31 +30,21 @@ void search_exact(trie_set& res, const TrieNode* root, const std::string& word, 
     }
 }
 
-void search_aux(trie_set& res, const TrieNode& node, const std::string& word,
-        const std::string acc, uint16_t max_dist)
+void search_aux(trie_set& res, const TrieNode& node, BacktrackLevenshtein& leven, uint16_t max_dist)
 {
-    if (word.size() + max_dist < acc.size())
-        return;
-
-    for (const auto& child : node.child)
+    for (const auto& child : (*node).child)
     {
-        std::string cur_str;
-        cur_str.reserve(acc.length() + child.str.length());
-        cur_str += acc;
-        cur_str += child.str;
-        std::cout << child.str << std::endl;
-        if (child.occ)
-        {
-            uint16_t dist = levenstein_dist(word, cur_str, max_dist);
+        uint16_t old_hay_size = leven.get_hay_size();
 
-            if (dist <= max_dist)
-            {
-                res.emplace(cur_str, child.occ, dist);
-                if (!max_dist)
-                    return;
-            }
+        uint16_t dist = leven.add(child.str);
+        if (dist <= 2 * max_dist)
+        {
+            if (child.occ && leven.distance() <= max_dist)
+                res.emplace(std::string(leven.get_hay(), leven.get_hay_size()), child.occ, leven.distance());
+            search_aux(res, child, leven, max_dist);
         }
-        search_aux(res, child, word, cur_str, max_dist);
+
+        leven.reset_hay(old_hay_size);
     }
 }
 
@@ -106,9 +52,13 @@ trie_set search(const TrieNode& root, const std::string& word, uint16_t distance
 {
     trie_set res;
     if (distance)
-        search_aux(res, root, word, "", distance);
+    {
+        BacktrackLevenshtein leven(word, distance);
+        search_aux(res, root, leven, distance);
+    }
     else
         search_exact(res, &root, word, 0);
+
     return res;
 }
 
