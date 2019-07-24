@@ -6,17 +6,28 @@
 
 void search_exact(trie_set& res, const TrieNode* root, const std::string& word, size_t offset)
 {
-    auto cur = root;
-    for (const auto& child: (*cur).child)
+    /**
+     * \fn void search_exact(trie_set& res, const TrieNode* root, const std::string& word, size_t offset)
+     * \brief Search function for exact string (approx 0) 
+     *
+     * \param res, the set of results
+     * \param root, the root of the trie we are searching in
+     * \param word, the word we are looking for
+     * \param offset, the current offset at which we are reading the word
+     */
+    // iterate on child
+    for (const auto& child: (*root).child)
     {
         auto child_len = child.str.length();
+        // make substring without copying
         auto sub_str = std::string_view(word.data() + offset, child_len);
-
+        // if we arrive at a ending leaf, and we're at the end of the word, add the word
         if (child_len == 0 && word.length() == offset)
         {
             res.emplace(word, child.occ, 0);
             return;
         }
+        // compare the strings
         if (sub_str.length() && child.str == sub_str)
         {
             if (child.occ && (offset + child_len) == word.length())
@@ -24,6 +35,7 @@ void search_exact(trie_set& res, const TrieNode* root, const std::string& word, 
                 res.emplace(word, child.occ, 0);
                 return;
             }
+            // re iterate with current node as root
             search_exact(res, &child, word, offset + child.str.length());
             break;
         }
@@ -32,7 +44,16 @@ void search_exact(trie_set& res, const TrieNode* root, const std::string& word, 
 
 void search_aux(trie_set& res, const TrieNode& node, BacktrackLevenshtein& leven, uint16_t max_dist)
 {
-    for (const auto& child : (*node).child)
+    /**
+     * \fn void search_aux(trie_set& res, const TrieNode& node, BacktrackLevenshtein& leven, uint16_t max_dist)
+     * \brief Search function for string with approx 
+     *
+     * \param res, the set of results
+     * \param root, the root of the trie we are searching in
+     * \param word, the word we are looking for
+     * \param max_dist, levenstein distance
+     */
+    for (const auto& child : node.child)
     {
         uint16_t old_hay_size = leven.get_hay_size();
 
@@ -50,6 +71,14 @@ void search_aux(trie_set& res, const TrieNode& node, BacktrackLevenshtein& leven
 
 trie_set search(const TrieNode& root, const std::string& word, uint16_t distance)
 {
+    /**
+     * \fn trie_set search(const TrieNode& root, const std::string& word, uint16_t distance)
+     * \brief Dispatch between search approx 0 and search with approx > 0
+     *
+     * \param root, the root of the trie we are searching in
+     * \param string, the word we are looking for
+     * \param distance, levenstein distance
+     */
     trie_set res;
     if (distance)
     {
