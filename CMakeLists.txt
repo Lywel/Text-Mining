@@ -23,7 +23,7 @@ doxygen_add_docs(
     COMMENT "Generate doxygen HTML"
 )
 
-SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${HelloCMake_SOURCE_DIR}/)
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY .)
 
 # Flags
 set(CMAKE_CXX_STANDARD 17)
