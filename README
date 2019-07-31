@@ -1,0 +1,86 @@
+Questions:
+==========
+ 1. Décrivez les choix de design de votre programme
+
+    Notre program contruit un patricia trie a partir de la liste de mots. Ce trie
+contient toutes les infos de la liste de mots. Il fais moins de 250Mo en ram et
+permet donc une manipulation de données simple. Tous les noeuds ont un champs
+`occ` qui correspond au nombre d'occurence du mot correspondant. Les noeuds qui
+ne sont pas de feuilles ont simplement ce champs a 0.
+
+Nous serealizions l'arbre en utilisant boost. Il est ensuite deserealizé au
+lancement du programme et tiens entierement en ram.
+
+Pour la recherche dans le trie nous utilisons 2 methodes:
+  - Pour les recherches en distance 0 nous parcourons simplement le trie en
+comparant a chaque noeud le mot construit depuis la racine.
+  - Pour les distances > 0 nous utilisons un algo de Damerau-Levenshtein
+evolutif proche du backtracking. Sa complexité ram depend uniquement de la
+taille du mot recherché et de la distance max de la recherche. La methode
+classique de calcul de distance consiste a construire un tableau avec les
+2 mots a comparer. Pour des soucis de performance nous avons decider d'utiliser
+un seul tableau, alloué une seule fois et jamais copié ou déplacé.  Lors du
+parcours de l'arbre vers les feuilles nous calculons uniquement la partie du
+tabeau qui a été ajoutée. En observant la distance Damerau-Levenshtein
+approximative ainsi obtenue on peut alors decider des noeuds a ignorer. On
+peut alors revenir de n carateres dans le tableau et ecrire les nouvelles
+valeures par dessus les anciennes. On economise ainsi le calcul des valeurs
+de tableau correspondant aux prefix communs.
+
+
+ 2. Listez l’ensemble des tests effectués sur votre programme (en plus des units tests)
+
+    Nous avons fais des tests d'utilisation de ram avec des regles cgroup et des
+tests de performace avec perf et flamegraph.
+Pour la partie debug nous avions aussi une option de debug graphic de l'arbre.
+Avec une liste de mot suffisement simple nous pouvions le calculer manuellement
+et ainsi automatiser les tests de compilation.
+Nous avons testé avec de grandes distances (10) et avec de tres grands nombres
+de lignes de tests.
+
+
+ 3. Avez-vous détecté des cas où la correction par distance ne fonctionnait pas (même avec une distance élevée) ?
+
+    Le ref fais la difference entre les majuscules et les minuscules, cela peut
+etre limitant pour un correcteur orthographique. Mais cela depends de
+l'application réele car on peut parfois souhaiter un capitalisation.
+
+
+ 4. Quelle est la structure de données que vous avez implémentée dans votre projet, pourquoi ?
+
+    Nous utilisons un patricia trie pour son utilisation economique de memoire
+et sa complexité en O(n) (n etant la longueure du mot) d'insertion et de
+recherche en distance 0.
+
+
+ 5. Proposez un réglage automatique de la distance pour un programme qui prend juste une chaîne de caractères en entrée, donner le processus d’évaluation ainsi que les résultats
+
+    Intuitivement le nombre d'erreur dans un mot devrait etre corelé sa longueur.
+On pourrait alors proposer un reglage en fonction de la taille du mot.
+Pour evaluer cette methode et trouver le reglage optimal il faudrait passer cet
+algo sur un gros corpus de mots plus ou moins long et avec plus ou moins d'erreur.
+En faisant une passe par reglage on peut alors trouver combien de mots ont pu
+etre corrigés et combien n'ont pas trouvé de correction. Fort de l'analyse de ces
+données on peut alors trouver le reglage le plus bas possible (plus petite
+distance = recherche plus rapide) qui corrige le plus de mots.
+
+
+ 6. Comment comptez vous améliorer les performances de votre programme
+
+    Il semblerait que notre choix de structure de données fut le facteur limitant
+de notre programme. En effet nous avons tenté de nombreux algorithmes de
+parcours et de calculs de distance de Damerau-Levenshtein et malgré que notre
+arbre soit chargé a 100% en ram, nous sommes loin d'avoir les qps requis.
+Il semblerait que l'utilisation de BK-tree est plus adapté a la recherche
+approximative. Enfin encoder l'arbre plus simplement et parcourire la memoire
+sans passer par de nombreuses abstractions de std pourrait nous faire gagner du
+temps.
+
+
+ 7. Que manque-t-il à votre correcteur orthographique pour qu’il soit à l’état de l’art ?
+
+    Il manque evidemment l'analyse du context et des notions de grammaire /
+conjugaisons / accords via du stemming / lemming. L'état de l'art du correcteur
+orthographique propose parfois meme des suggestions stylistiques.
+
+
