@@ -10,6 +10,6 @@ file(GLOB SRC
   main.cc
 )
 
-add_executable(app ${SRC})
-target_include_directories(app PUBLIC ../trie .)
-target_link_libraries(app LINK_PUBLIC ${Boost_LIBRARIES} )
+add_executable(TextMiningApp ${SRC})
+target_include_directories(TextMiningApp PUBLIC ../trie .)
+target_link_libraries(TextMiningApp LINK_PUBLIC ${Boost_LIBRARIES} )

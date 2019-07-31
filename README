@@ -1,3 +1,13 @@
+Build:
+=========
+
+Notre buildsystem est cmake, pour build:
+
+```
+cmake .
+make -j4
+```
+
 Questions:
 ==========
  1. Décrivez les choix de design de votre programme

@@ -8,6 +8,6 @@ file(GLOB SRC
   main.cc
 )
 
-add_executable(compiler ${SRC})
-target_include_directories(compiler PUBLIC ../trie)
-target_link_libraries(compiler LINK_PUBLIC ${Boost_LIBRARIES} )
+add_executable(TextMiningCompiler ${SRC})
+target_include_directories(TextMiningCompiler PUBLIC ../trie)
+target_link_libraries(TextMiningCompiler LINK_PUBLIC ${Boost_LIBRARIES} )
