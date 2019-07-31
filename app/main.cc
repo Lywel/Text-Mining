@@ -101,7 +101,7 @@ void loop(const TrieNode& root, std::istream& words, std::ostream& out)
     {
         std::string sep;
         const trie_set& results = search(root, word, distance);
-            
+
         out << "[";
         for (const auto& result : results)
         {

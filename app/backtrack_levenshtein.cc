@@ -57,13 +57,6 @@ uint16_t BacktrackLevenshtein::add(const std::string& str)
             uint16_t sub_dist = dist[i-1][j-1] + diff; // Substitution
 
             dist[i][j] = std::min({sup_dist, ins_dist, sub_dist});
-            /*std::cout << "(" << i << ", " << j << ") = " << dist[i][j]
-                << " (diff: " << diff
-                << ", sup: " << sup_dist
-                << ", ins: " << ins_dist
-                << ", sub: " << sub_dist << ")" << std::endl;
-            std::cout << "hay[i] = " << hay[i-1] << ", needle[j] = " << needle[j-1] << std::endl;*/
-
 
             // Transposition
             if (i > 1 && j > 1 && hay[i-1] == needle[j-2] && hay[i-2] == needle[j-1])

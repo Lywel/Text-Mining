@@ -149,13 +149,11 @@ void compile(std::ifstream& words, std::ofstream& bin)
     root.pretty_print(std::cout);
     #endif
 
-    std::cout << "trie built: saveing..." << std::endl;
     // save data to archive
     {
         boost::archive::binary_oarchive oa(bin, boost::archive::no_header);
         oa << root;
     }
-    std::cout << "done." << std::endl;
 }
 
 int main(int argc, char** argv)
